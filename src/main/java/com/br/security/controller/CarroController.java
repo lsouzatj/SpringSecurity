@@ -7,6 +7,9 @@ import lombok.extern.log4j.Log4j2;
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,13 +25,15 @@ public class CarroController {
     private String msg;
 
     @GetMapping("status")
-    public ResponseEntity status() {
+    public ResponseEntity status(@AuthenticationPrincipal UserDetails userDetails) {
         msg = "GET CarroController status: Consultando Status da API.";
         log.warn(msg);
+        log.warn("userDetails {}", userDetails);
         return ResponseEntity.ok(msg);
     }
 
     @PostMapping("salvar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity salvar(@RequestBody CarroEntity carroEntity) {
         msg = "GET CarroController salvar: Salvando carro.";
         log.warn(msg);
